@@ -105,5 +105,7 @@ splitting up flags
 ```bash 
 defined polymorphism -s -e #this will cause an error because the flags are separated.
 ```
-# Have Fun
-This is my first cpp program but it does sorta work so use it if you like.
+# Notes
+This is my first cpp program but it does sorta work so use it if you like. 
+
+**Note** could not get to work on linux might try again later.
