@@ -20,6 +20,9 @@ std::string path;
 int main(int argc, char *argv[]){
     path = argv[0];
     std::vector ind = findAllIndexs(path, '\\');
+    if(ind.empty() == true){
+        ind == findAllIndexs(path, char('/'));
+    }
     path = path.substr(0, ind[ind.size() - 2]);
     std::string word = argv[1];
     std::string toPrint;
@@ -70,10 +73,17 @@ std::string define(std::string word, int meaning){
     std::ifstream data(fileName);
     json wordDict;
     data >> wordDict;
-    std::string def = wordDict[word]["meanings"][meaning]["def"];
+    std::string def;
+    try{
+       def = wordDict[word]["meanings"][meaning]["def"];
+    }catch(const std::exception& e){
+        def = "None";
+    }
+
+     
     data.close();
 
-    return "Definition: " + def + ".";
+    return "Definition of " + word + ": " + def + ".";
 }
 
 std::string getSynonyms(std::string word, int meaning){
@@ -82,15 +92,19 @@ std::string getSynonyms(std::string word, int meaning){
     std::ifstream data(fileName);
     json wordDict;
     data >> wordDict;
-    
-    std::vector<std::string> def = wordDict[word]["meanings"][meaning]["synonyms"];
+    std::vector<std::string> syn;
     std::string synonyms = "";
+    try{
+        syn = wordDict[word]["meanings"][meaning]["synonyms"];
+    }catch(const std::exception& e){
+        synonyms = "None";
+    }
     
-    for(int i = 0; i < int(def.size()); i++){
-        synonyms += def[i];
-        if(int(def.size())  >= 2 && i != int(def.size()) - 1){
+    for(int i = 0; i < int(syn.size()); i++){
+        synonyms += syn[i];
+        if(int(syn.size())  >= 2 && i != int(syn.size()) - 1){
             synonyms += ", ";
-            if(i == int(def.size()) -2){
+            if(i == int(syn.size()) -2){
                 synonyms += "and ";
             }    
         }
@@ -106,7 +120,12 @@ std::string getSpeachPart(std::string word, int meaning){
     std::ifstream data(fileName);
     json wordDict;
     data >> wordDict;
-    std::string sp = wordDict[word]["meanings"][meaning]["speech_part"];
+    std::string sp;
+    try{
+        sp = wordDict[word]["meanings"][meaning]["speech_part"];
+    }catch(const std::exception& e){
+        sp = "None";
+    }
     data.close();
 
     return "Part of Speach: " + sp + ".";
@@ -118,10 +137,14 @@ std::string getExample(std::string word, int meaning){
     std::ifstream data(fileName);
     json wordDict;
     data >> wordDict;
-    std::string example = wordDict[word]["meanings"][meaning]["example"];
+    std::string example;
+    try{
+        example = wordDict[word]["meanings"][meaning]["example"];
+    }catch(const std::exception& e){
+        example = "None";
+    }
 
     data.close();
-
     return "Example: " + example + ".";
 }
 
@@ -153,7 +176,7 @@ std::vector<int> findAllIndexs(std::string word, char letterToFind){
 }
 
 std::string handleArgs(std::string args, std::string word, int meaning){
-    std::string toReturn = "";
+    std::string toReturn = " ";
     for(int i = 1; i < int(args.length()); i++){
         switch(args[i]){
             case 's':
@@ -163,7 +186,6 @@ std::string handleArgs(std::string args, std::string word, int meaning){
                 toReturn += getSpeachPart(word, meaning);
                 break;
             case 'e':
-            std::cout << "e case reached" << std::endl;
                 toReturn += getExample(word, meaning);
                 break;
             default:
